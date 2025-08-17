@@ -1,9 +1,11 @@
 import json
-import aiosqlite
 from dataclasses import dataclass
-from backend.core.apps.interfaces.ports.session_repo import SessionRepository
+
+import aiosqlite
+
 from backend.core.apps.domain.entities.session import ChatSession, Message
 from backend.core.apps.domain.value_objects.ids import ChatId
+from backend.core.apps.interfaces.ports.session_repo import SessionRepository
 
 
 @dataclass

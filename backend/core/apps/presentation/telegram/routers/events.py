@@ -1,12 +1,22 @@
 from dataclasses import dataclass
-from aiogram import Router, types, F
-from zoneinfo import ZoneInfo
-from backend.core.apps.config.settings import settings
 from datetime import datetime
-from backend.core.apps.use_cases.publish_event import PublishEvent, PublishEventInput, event_keyboard
-from backend.core.apps.use_cases.register_for_event import RegisterForEvent, ToggleGoingInput, ToggleDeclineInput
+from zoneinfo import ZoneInfo
+
+from aiogram import F, Router, types
+
+from backend.core.apps.config.settings import settings
 from backend.core.apps.interfaces.ports.event_repo import EventRepository
 from backend.core.apps.use_cases.close_event import CloseEvent, CloseEventInput
+from backend.core.apps.use_cases.publish_event import (
+    PublishEvent,
+    PublishEventInput,
+    event_keyboard,
+)
+from backend.core.apps.use_cases.register_for_event import (
+    RegisterForEvent,
+    ToggleDeclineInput,
+    ToggleGoingInput,
+)
 
 
 @dataclass
@@ -30,7 +40,9 @@ class EventsRouterFactory:
                 else:
                     starts_at = starts_at.astimezone(ZoneInfo(settings.TZ))
             except Exception:
-                await m.reply("Формат: /event_quick <title> | <place> | <category> | <YYYY-MM-DD HH:MM>")
+                await m.reply(
+                    "Формат: /event_quick <title> | <place> | <category> | <YYYY-MM-DD HH:MM>"
+                )
                 return
 
             data = PublishEventInput(
@@ -43,7 +55,9 @@ class EventsRouterFactory:
             )
             evt = await self.publish_uc.create(data)
             text = await self.publish_uc.build_text(evt)
-            sent = await m.answer(text, reply_markup=event_keyboard(evt.id), disable_web_page_preview=True)
+            sent = await m.answer(
+                text, reply_markup=event_keyboard(evt.id), disable_web_page_preview=True
+            )
             evt.message_id = sent.message_id
             await self.publish_uc.events.update(evt)
             await self.publish_uc.finalize_and_schedule(evt)
@@ -62,8 +76,9 @@ class EventsRouterFactory:
                 ),
             )
             if changed:
-                await cb.message.edit_text(payload, reply_markup=event_keyboard(event_id),
-                                           disable_web_page_preview=True)
+                await cb.message.edit_text(
+                    payload, reply_markup=event_keyboard(event_id), disable_web_page_preview=True
+                )
                 await cb.answer("Записал: идёшь!")
             else:
                 await cb.answer(payload)
@@ -82,8 +97,9 @@ class EventsRouterFactory:
                 ),
             )
             if changed:
-                await cb.message.edit_text(payload, reply_markup=event_keyboard(event_id),
-                                           disable_web_page_preview=True)
+                await cb.message.edit_text(
+                    payload, reply_markup=event_keyboard(event_id), disable_web_page_preview=True
+                )
                 await cb.answer("Ок, не идёшь.")
             else:
                 await cb.answer(payload)

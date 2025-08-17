@@ -1,7 +1,6 @@
 from dataclasses import dataclass, field
-from typing import Literal
 from datetime import datetime
-
+from typing import Literal
 
 EventStatus = Literal["published", "closed"]
 Category = Literal["walk", "cinema", "cafe", "sport", "meetup", "other"]
@@ -24,12 +23,14 @@ class Event:
     status: EventStatus = "published"
     created_at: datetime = field(default_factory=datetime.utcnow)
 
+
 @dataclass
 class Registration:
     event_id: int
     user_id: int
     status: Literal["going", "declined"]
     updated_at: datetime = field(default_factory=datetime.utcnow)
+
 
 @dataclass
 class Member:

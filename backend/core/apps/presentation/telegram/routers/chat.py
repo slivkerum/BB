@@ -1,6 +1,9 @@
 from dataclasses import dataclass
-from aiogram import Router, types, F
+
+from aiogram import F, Router, types
+
 from backend.core.apps.use_cases.generate_reply import GenerateReply, GenerateReplyInput
+
 
 @dataclass
 class ChatRouterFactory:

@@ -1,6 +1,7 @@
 from dataclasses import dataclass
-from backend.core.apps.interfaces.ports.session_repo import SessionRepository
+
 from backend.core.apps.domain.value_objects.ids import ChatId
+from backend.core.apps.interfaces.ports.session_repo import SessionRepository
 
 
 @dataclass

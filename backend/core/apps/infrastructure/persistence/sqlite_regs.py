@@ -1,8 +1,10 @@
-import aiosqlite
 from dataclasses import dataclass
-from datetime import datetime
+
+import aiosqlite
+
 from backend.core.apps.domain.entities.event import Registration
 from backend.core.apps.interfaces.ports.registration_repo import RegistrationRepository
+
 
 @dataclass
 class SQLiteRegistrationRepo(RegistrationRepository):
@@ -36,15 +38,18 @@ class SQLiteRegistrationRepo(RegistrationRepository):
             row = await cur.fetchone()
             await cur.close()
             old = row[0] if row else None
-            changed = (old != reg.status)
+            changed = old != reg.status
 
             # апсертим только если изменилось (но можно и всегда — не принципиально)
-            await db.execute("""
+            await db.execute(
+                """
                              INSERT INTO registrations (event_id, user_id, status, updated_at)
                              VALUES (?, ?, ?, ?) ON CONFLICT(event_id, user_id) DO
                              UPDATE SET
                                  status=excluded.status, updated_at=excluded.updated_at
-                             """, (reg.event_id, reg.user_id, reg.status, reg.updated_at.isoformat()))
+                             """,
+                (reg.event_id, reg.user_id, reg.status, reg.updated_at.isoformat()),
+            )
             await db.commit()
 
             return changed
@@ -54,8 +59,7 @@ class SQLiteRegistrationRepo(RegistrationRepository):
         async with aiosqlite.connect(self.dsn) as db:
             db.row_factory = aiosqlite.Row
             cur = await db.execute(
-                "SELECT user_id, status FROM registrations WHERE event_id=?",
-                (event_id,)
+                "SELECT user_id, status FROM registrations WHERE event_id=?", (event_id,)
             )
             rows = await cur.fetchall()
             await cur.close()
@@ -65,8 +69,7 @@ class SQLiteRegistrationRepo(RegistrationRepository):
         await self._init()
         async with aiosqlite.connect(self.dsn) as db:
             cur = await db.execute(
-                "SELECT user_id FROM registrations WHERE event_id=? AND status='going'",
-                (event_id,)
+                "SELECT user_id FROM registrations WHERE event_id=? AND status='going'", (event_id,)
             )
             rows = await cur.fetchall()
             await cur.close()
@@ -77,7 +80,7 @@ class SQLiteRegistrationRepo(RegistrationRepository):
         async with aiosqlite.connect(self.dsn) as db:
             cur = await db.execute(
                 "SELECT user_id FROM registrations WHERE event_id=? AND status='declined'",
-                (event_id,)
+                (event_id,),
             )
             rows = await cur.fetchall()
             await cur.close()

@@ -1,8 +1,9 @@
 from dataclasses import dataclass
-from backend.core.apps.interfaces.ports.llm_gateway import LLMGateway, LLMMessage, LLMResult
-from backend.core.apps.interfaces.ports.session_repo import SessionRepository
+
 from backend.core.apps.domain.entities.session import ChatSession, Message
 from backend.core.apps.domain.value_objects.ids import ChatId
+from backend.core.apps.interfaces.ports.llm_gateway import LLMGateway, LLMMessage, LLMResult
+from backend.core.apps.interfaces.ports.session_repo import SessionRepository
 
 
 @dataclass
@@ -27,7 +28,9 @@ class GenerateReply:
 
         mode_tag = f"[mode={session.mode}] "
 
-        messages: list[LLMMessage] = [LLMMessage(role="system", content="You are a helpful assistant.")]
+        messages: list[LLMMessage] = [
+            LLMMessage(role="system", content="You are a helpful assistant.")
+        ]
         for m in session.history[-10:]:
             messages.append(LLMMessage("user" if m.role == "user" else "assistant", m.text))
         messages.append(LLMMessage("user", mode_tag + data.user_text))

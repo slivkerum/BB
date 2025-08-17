@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+
 from backend.core.apps.domain.entities.event import Member
 
 

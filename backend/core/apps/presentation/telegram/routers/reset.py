@@ -1,6 +1,9 @@
 from dataclasses import dataclass
-from aiogram import Router, F, types
+
+from aiogram import F, Router, types
+
 from backend.core.apps.use_cases.reset_session import ResetSession, ResetSessionInput
+
 
 @dataclass
 class ResetRouterFactory:

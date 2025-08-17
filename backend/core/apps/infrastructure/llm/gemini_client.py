@@ -1,20 +1,17 @@
-import anyio
-import google.generativeai as genai
-
 from dataclasses import dataclass
 from typing import Sequence
 
-from backend.core.apps.interfaces.ports.llm_gateway import (
-    LLMGateway,
-    LLMMessage,
-    LLMResult
-)
+import anyio
+import google.generativeai as genai
 
+from backend.core.apps.interfaces.ports.llm_gateway import LLMGateway, LLMMessage, LLMResult
 
 
 @dataclass
 class FakeGemini(LLMGateway):
-    async def generate(self, messages: Sequence[LLMMessage], max_tokens=None, temperature=None) -> LLMResult:
+    async def generate(
+        self, messages: Sequence[LLMMessage], max_tokens=None, temperature=None
+    ) -> LLMResult:
         last_user = next((m.content for m in reversed(messages) if m.role == "user"), "")
         return LLMResult(text=f"[FAKE GEMINI] Ты сказал: {last_user}")
 
@@ -25,7 +22,9 @@ class GeminiGateway(LLMGateway):
     model_name: str = "gemini-1.5-flash"
     system_instruction: str = "You are a helpful, concise assistant."
 
-    async def generate(self, messages: Sequence[LLMMessage], max_tokens=None, temperature=None) -> LLMResult:
+    async def generate(
+        self, messages: Sequence[LLMMessage], max_tokens=None, temperature=None
+    ) -> LLMResult:
         def _run_sync() -> str:
             genai.configure(api_key=self.api_key)
             model = genai.GenerativeModel(
@@ -42,5 +41,6 @@ class GeminiGateway(LLMGateway):
                 },
             )
             return resp.text or ""
+
         text = await anyio.to_thread.run_sync(_run_sync)
         return LLMResult(text=text)

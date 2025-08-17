@@ -1,9 +1,10 @@
 from dataclasses import dataclass
-from backend.core.apps.domain.entities.event import Registration, Member
+
+from backend.core.apps.domain.entities.event import Member, Registration
 from backend.core.apps.interfaces.ports.event_repo import EventRepository
+from backend.core.apps.interfaces.ports.member_repo import MemberRepository
 from backend.core.apps.interfaces.ports.registration_repo import RegistrationRepository
 from backend.core.apps.presentation.telegram.presenters.event_card import EventCardPresenter
-from backend.core.apps.interfaces.ports.member_repo import MemberRepository
 
 
 @dataclass
@@ -54,28 +55,36 @@ class RegisterForEvent:
         return self.presenter.render(evt, going, declined)
 
     async def toggle_going(self, event_id: int, data: ToggleGoingInput) -> tuple[bool, str]:
-        await self.members.upsert(Member(
-            user_id=data.user_id,
-            display_name=data.user_name,
-            username=data.user_username,
-        ))
+        await self.members.upsert(
+            Member(
+                user_id=data.user_id,
+                display_name=data.user_name,
+                username=data.user_username,
+            )
+        )
         await self.members.touch_activity(data.user_id)
 
-        changed = await self.regs.set_status(Registration(event_id=event_id, user_id=data.user_id, status="going"))
+        changed = await self.regs.set_status(
+            Registration(event_id=event_id, user_id=data.user_id, status="going")
+        )
         if not changed:
             return False, "Все еще красавчик"
         text = await self._rebuild(event_id)
         return True, text
 
     async def toggle_decline(self, event_id: int, data: ToggleDeclineInput) -> tuple[bool, str]:
-        await self.members.upsert(Member(
-            user_id=data.user_id,
-            display_name=data.user_name,
-            username=data.user_username,
-        ))
+        await self.members.upsert(
+            Member(
+                user_id=data.user_id,
+                display_name=data.user_name,
+                username=data.user_username,
+            )
+        )
         await self.members.touch_activity(data.user_id)
 
-        changed = await self.regs.set_status(Registration(event_id=event_id, user_id=data.user_id, status="declined"))
+        changed = await self.regs.set_status(
+            Registration(event_id=event_id, user_id=data.user_id, status="declined")
+        )
         if not changed:
             return False, "Черт бляяя"
         text = await self._rebuild(event_id)

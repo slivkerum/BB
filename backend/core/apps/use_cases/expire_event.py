@@ -1,8 +1,10 @@
 from dataclasses import dataclass
+
 from aiogram import Bot
+
 from backend.core.apps.interfaces.ports.event_repo import EventRepository
-from backend.core.apps.interfaces.ports.scheduler import Scheduler
 from backend.core.apps.interfaces.ports.reminder_msg_repo import ReminderMessageRepository
+from backend.core.apps.interfaces.ports.scheduler import Scheduler
 
 
 @dataclass

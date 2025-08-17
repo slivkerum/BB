@@ -1,34 +1,32 @@
 from dataclasses import dataclass
+
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 
 from backend.core.apps.config.settings import settings
+from backend.core.apps.infrastructure.llm.gemini_client import FakeGemini, GeminiGateway
 from backend.core.apps.infrastructure.persistence.memory_session import InMemorySessionRepo
-from backend.core.apps.infrastructure.persistence.sqlite_session import SQLiteSessionRepo
 from backend.core.apps.infrastructure.persistence.sqlite_events import SQLiteEventRepo
+from backend.core.apps.infrastructure.persistence.sqlite_members import SQLiteMemberRepo
 from backend.core.apps.infrastructure.persistence.sqlite_regs import SQLiteRegistrationRepo
 from backend.core.apps.infrastructure.persistence.sqlite_reminders import SQLiteReminderMsgRepo
-from backend.core.apps.infrastructure.persistence.sqlite_members import SQLiteMemberRepo
-from backend.core.apps.infrastructure.llm.gemini_client import FakeGemini, GeminiGateway
+from backend.core.apps.infrastructure.persistence.sqlite_session import SQLiteSessionRepo
 from backend.core.apps.infrastructure.scheduler.aps import APSSchedulerAdapter
-
 from backend.core.apps.presentation.telegram.presenters.event_card import EventCardPresenter
 from backend.core.apps.presentation.telegram.routers.chat import ChatRouterFactory
-from backend.core.apps.presentation.telegram.routers.reset import ResetRouterFactory
+from backend.core.apps.presentation.telegram.routers.dm_start import DMStartRouterFactory
 from backend.core.apps.presentation.telegram.routers.events import EventsRouterFactory
 from backend.core.apps.presentation.telegram.routers.events_wizard import EventsWizardRouterFactory
 from backend.core.apps.presentation.telegram.routers.help import HelpRouterFactory
-from backend.core.apps.presentation.telegram.routers.dm_start import DMStartRouterFactory
-
-from backend.core.apps.use_cases.generate_reply import GenerateReply
-from backend.core.apps.use_cases.reset_session import ResetSession
-from backend.core.apps.use_cases.publish_event import PublishEvent
-from backend.core.apps.use_cases.register_for_event import RegisterForEvent
+from backend.core.apps.presentation.telegram.routers.reset import ResetRouterFactory
 from backend.core.apps.use_cases.close_event import CloseEvent
 from backend.core.apps.use_cases.expire_event import ExpireEvent
-from backend.core.apps.use_cases.send_event_reminder import SendEventReminder
+from backend.core.apps.use_cases.generate_reply import GenerateReply
 from backend.core.apps.use_cases.post_daily_digest import PostDailyDigest
-
+from backend.core.apps.use_cases.publish_event import PublishEvent
+from backend.core.apps.use_cases.register_for_event import RegisterForEvent
+from backend.core.apps.use_cases.reset_session import ResetSession
+from backend.core.apps.use_cases.send_event_reminder import SendEventReminder
 
 
 @dataclass
