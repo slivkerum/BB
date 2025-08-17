@@ -1,0 +1,49 @@
+[tool.poetry]
+name = "tg-gemini-bot"
+version = "0.1.0"
+description = "Telegram bot (Gemini)"
+authors = ["dima <slivkerum@mail.ru>"]
+license = "MIT"
+readme = "README.md"
+packages = [{ include = "core", from = "backend" }]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+aiogram = "^3"
+pydantic = "^2"
+pydantic-settings = "^2"
+google-generativeai = "^0.8.5"
+anyio = "^4.10.0"
+aiosqlite = "^0.21.0"
+apscheduler = "^3.11.0"
+pytz = "^2025.2"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.4.1"
+pytest-asyncio = "^1.1.0"
+ruff = "^0.12.8"
+mypy = "^1.17.1"
+pre-commit = "^4.2.0"
+
+[tool.poetry.scripts]
+run-polling = "backend.core.apps.entrypoints.polling:main"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-select = ["I"]
+exclude = ["venv", ".venv"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+ignore_missing_imports = true
+mypy_path = "src"
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
