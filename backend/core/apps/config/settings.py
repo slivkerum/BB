@@ -1,5 +1,6 @@
-from pydantic_settings import BaseSettings
 from pydantic import field_validator
+from pydantic_settings import BaseSettings
+
 
 class Settings(BaseSettings):
     APP_ENV: str = "local"
@@ -14,7 +15,7 @@ class Settings(BaseSettings):
     DAILY_CHAT_ID: int | None = None
     DAILY_CRON: str = "0 9 * * *"
 
-    SESSIONS_BACKEND: str = "memory"   # memory | sqlite
+    SESSIONS_BACKEND: str = "memory"  # memory | sqlite
     SQLITE_DSN: str = "./sessions.db"
 
     EVENTS_CHAT_ID: int | None = None
@@ -33,5 +34,6 @@ class Settings(BaseSettings):
         super().__init__(**data)
         if self.GEMINI_API_KEY and self.LLM_PROVIDER == "fake":
             object.__setattr__(self, "LLM_PROVIDER", "gemini")
+
 
 settings = Settings()

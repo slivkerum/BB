@@ -1,10 +1,13 @@
 from dataclasses import dataclass
-from aiogram import Router, types, F
+
+from aiogram import F, Router, types
+
 
 @dataclass
 class HelpRouterFactory:
     def build(self) -> Router:
         r = Router()
+
         @r.message(F.text == "/help")
         async def help_msg(m: types.Message):
             await m.answer(
@@ -14,4 +17,5 @@ class HelpRouterFactory:
                 "/help — помощь\n\n"
                 "Под карточками событий доступны кнопки: Я пойду / Не могу / Список / Закрыть"
             )
+
         return r

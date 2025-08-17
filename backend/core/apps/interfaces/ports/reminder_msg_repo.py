@@ -8,6 +8,6 @@ class ReminderMessageRepository(ABC):
 
     @abstractmethod
     async def list_by_event(self, event_id: int) -> Sequence[tuple[int, int]]: ...
-    
+
     @abstractmethod
     async def delete_for_event(self, event_id: int) -> None: ...

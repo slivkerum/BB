@@ -1,8 +1,11 @@
-import aiosqlite
 from dataclasses import dataclass
 from datetime import datetime
+
+import aiosqlite
+
 from backend.core.apps.domain.entities.event import Event
 from backend.core.apps.interfaces.ports.event_repo import EventRepository
+
 
 @dataclass
 class SQLiteEventRepo(EventRepository):
@@ -36,15 +39,27 @@ class SQLiteEventRepo(EventRepository):
     async def create(self, evt: Event) -> Event:
         await self._init()
         async with aiosqlite.connect(self.dsn) as db:
-            cur = await db.execute("""
+            cur = await db.execute(
+                """
               INSERT INTO events (chat_id,message_id,title,place,category,starts_at,organizer_id,
                                   capacity,cost_policy,notes,status,created_at)
               VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
-            """, (
-                evt.chat_id, evt.message_id, evt.title, evt.place, evt.category,
-                evt.starts_at.isoformat(), evt.organizer_id, evt.capacity,
-                evt.cost_policy, evt.notes, evt.status, evt.created_at.isoformat()
-            ))
+            """,
+                (
+                    evt.chat_id,
+                    evt.message_id,
+                    evt.title,
+                    evt.place,
+                    evt.category,
+                    evt.starts_at.isoformat(),
+                    evt.organizer_id,
+                    evt.capacity,
+                    evt.cost_policy,
+                    evt.notes,
+                    evt.status,
+                    evt.created_at.isoformat(),
+                ),
+            )
             await db.commit()
             evt.id = cur.lastrowid
             return evt
@@ -52,15 +67,27 @@ class SQLiteEventRepo(EventRepository):
     async def update(self, evt: Event) -> None:
         await self._init()
         async with aiosqlite.connect(self.dsn) as db:
-            await db.execute("""
+            await db.execute(
+                """
               UPDATE events SET chat_id=?, message_id=?, title=?, place=?, category=?, starts_at=?,
                                 organizer_id=?, capacity=?, cost_policy=?, notes=?, status=?
               WHERE id=?
-            """, (
-                evt.chat_id, evt.message_id, evt.title, evt.place, evt.category,
-                evt.starts_at.isoformat(), evt.organizer_id, evt.capacity,
-                evt.cost_policy, evt.notes, evt.status, evt.id
-            ))
+            """,
+                (
+                    evt.chat_id,
+                    evt.message_id,
+                    evt.title,
+                    evt.place,
+                    evt.category,
+                    evt.starts_at.isoformat(),
+                    evt.organizer_id,
+                    evt.capacity,
+                    evt.cost_policy,
+                    evt.notes,
+                    evt.status,
+                    evt.id,
+                ),
+            )
             await db.commit()
 
     async def close(self, event_id: int) -> None:

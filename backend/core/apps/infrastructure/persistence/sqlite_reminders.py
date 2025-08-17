@@ -1,6 +1,7 @@
-import aiosqlite
 from dataclasses import dataclass
 from typing import Sequence
+
+import aiosqlite
 
 
 @dataclass

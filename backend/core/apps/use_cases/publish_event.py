@@ -1,8 +1,10 @@
 from dataclasses import dataclass
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
+
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+
 from backend.core.apps.config.settings import settings
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from backend.core.apps.domain.entities.event import Event
 from backend.core.apps.interfaces.ports.event_repo import EventRepository
 from backend.core.apps.interfaces.ports.registration_repo import RegistrationRepository
@@ -10,16 +12,18 @@ from backend.core.apps.presentation.telegram.presenters.event_card import EventC
 
 
 def event_keyboard(event_id: int) -> InlineKeyboardMarkup:
-    return InlineKeyboardMarkup(inline_keyboard=[
-        [
-            InlineKeyboardButton(text="Я пойду", callback_data=f"e:{event_id}:g"),
-            InlineKeyboardButton(text="Не могу", callback_data=f"e:{event_id}:d"),
-            InlineKeyboardButton(text="Список", callback_data=f"e:{event_id}:l"),
-        ],
-        [
-            InlineKeyboardButton(text="Закрыть", callback_data=f"e:{event_id}:c"),
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text="Я пойду", callback_data=f"e:{event_id}:g"),
+                InlineKeyboardButton(text="Не могу", callback_data=f"e:{event_id}:d"),
+                InlineKeyboardButton(text="Список", callback_data=f"e:{event_id}:l"),
+            ],
+            [
+                InlineKeyboardButton(text="Закрыть", callback_data=f"e:{event_id}:c"),
+            ],
         ]
-    ])
+    )
 
 
 @dataclass

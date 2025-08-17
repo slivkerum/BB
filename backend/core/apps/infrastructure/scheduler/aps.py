@@ -1,8 +1,9 @@
 from dataclasses import dataclass, field
 from datetime import datetime
+
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from apscheduler.triggers.date import DateTrigger
 from apscheduler.triggers.cron import CronTrigger
+from apscheduler.triggers.date import DateTrigger
 from pytz import timezone
 
 
@@ -55,7 +56,9 @@ class APSSchedulerAdapter:
 
     async def schedule_daily(self, chat_id: int, cron: str, job_id: str) -> None:
         m, h, dom, mon, dow = cron.split()
-        trig = CronTrigger(minute=m, hour=h, day=dom, month=mon, day_of_week=dow, timezone=timezone(self.tz_name))
+        trig = CronTrigger(
+            minute=m, hour=h, day=dom, month=mon, day_of_week=dow, timezone=timezone(self.tz_name)
+        )
         self._scheduler.add_job(
             self._daily_post_job,
             trig,

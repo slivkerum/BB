@@ -24,5 +24,4 @@ class LLMGateway(ABC):
         messages: Sequence[LLMMessage],
         max_tokens: int | None = None,
         temperature: float | None = None,
-    ) -> LLMResult:
-        ...
+    ) -> LLMResult: ...

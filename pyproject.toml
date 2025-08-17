@@ -31,8 +31,10 @@ run-polling = "backend.core.apps.entrypoints.polling:main"
 [tool.ruff]
 line-length = 100
 target-version = "py312"
-extend-select = ["I"]
 exclude = ["venv", ".venv"]
+
+[tool.ruff.lint]
+extend-select = ["I"]
 
 [tool.mypy]
 python_version = "3.12"

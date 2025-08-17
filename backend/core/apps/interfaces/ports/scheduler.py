@@ -4,7 +4,9 @@ from datetime import datetime
 
 class Scheduler(ABC):
     @abstractmethod
-    async def schedule_event_reminders(self, event_id: int, when_list: list[datetime]) -> list[str]: ...
+    async def schedule_event_reminders(
+        self, event_id: int, when_list: list[datetime]
+    ) -> list[str]: ...
 
     @abstractmethod
     async def cancel_for_event(self, event_id: int) -> None: ...

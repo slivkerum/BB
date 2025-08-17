@@ -1,7 +1,8 @@
 from dataclasses import dataclass
-from backend.core.apps.domain.entities.event import Event
 from zoneinfo import ZoneInfo
+
 from backend.core.apps.config.settings import settings
+from backend.core.apps.domain.entities.event import Event
 
 
 @dataclass

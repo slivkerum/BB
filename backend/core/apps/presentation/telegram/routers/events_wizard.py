@@ -1,19 +1,29 @@
 # backend/core/apps/presentation/telegram/routers/events_wizard.py
 from dataclasses import dataclass
-from aiogram import Router, types, F
-from aiogram.fsm.state import StatesGroup, State
-from aiogram.fsm.context import FSMContext
-from aiogram.utils.keyboard import InlineKeyboardBuilder
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from backend.core.apps.use_cases.publish_event import PublishEvent, PublishEventInput, event_keyboard
-from backend.core.apps.presentation.telegram.widgets.calendar import InlineCalendar
-from backend.core.apps.config.settings import settings
+from aiogram import F, Router, types
+from aiogram.fsm.context import FSMContext
+from aiogram.fsm.state import State, StatesGroup
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 
+from backend.core.apps.config.settings import settings
+from backend.core.apps.presentation.telegram.widgets.calendar import InlineCalendar
+from backend.core.apps.use_cases.publish_event import (
+    PublishEvent,
+    PublishEventInput,
+    event_keyboard,
+)
 
 PLACES = ["Набережная", "Парк", "Кинотеатр", "Кафе", "Спортзал"]
-CATEGORIES = [("Прогулка", "walk"), ("Кино", "cinema"), ("Кафе", "cafe"), ("Спорт", "sport"), ("Митап", "meetup")]
+CATEGORIES = [
+    ("Прогулка", "walk"),
+    ("Кино", "cinema"),
+    ("Кафе", "cafe"),
+    ("Спорт", "sport"),
+    ("Митап", "meetup"),
+]
 
 
 class NewEventFSM(StatesGroup):
@@ -35,10 +45,15 @@ class EventsWizardRouterFactory:
         @r.message(F.text == "/new_event")
         async def start(m: types.Message, state: FSMContext):
             if m.chat.type != "private":
-                await m.answer("Создание событий только в ЛС. Напишите мне сюда 👉 @" + (await m.bot.me()).username)
+                await m.answer(
+                    "Создание событий только в ЛС. Напишите мне сюда 👉 @"
+                    + (await m.bot.me()).username
+                )
                 return
             if not settings.EVENTS_CHAT_ID:
-                await m.answer("Не задан EVENTS_CHAT_ID в .env — укажи ID группы, куда публиковать событие.")
+                await m.answer(
+                    "Не задан EVENTS_CHAT_ID в .env — укажи ID группы, куда публиковать событие."
+                )
                 return
             kb = InlineKeyboardBuilder()
             for p in PLACES:
@@ -57,7 +72,11 @@ class EventsWizardRouterFactory:
                 kb.button(text=title, callback_data=f"w:cat:{code}")
             kb.adjust(3)
             await state.set_state(NewEventFSM.category)
-            await cb.message.edit_text(f"Место: <b>{place}</b>\nТеперь выбери тип:", parse_mode="HTML", reply_markup=kb.as_markup())
+            await cb.message.edit_text(
+                f"Место: <b>{place}</b>\nТеперь выбери тип:",
+                parse_mode="HTML",
+                reply_markup=kb.as_markup(),
+            )
             await cb.answer()
 
         @r.callback_query(F.data.startswith("w:cat:"), NewEventFSM.category)
@@ -65,7 +84,9 @@ class EventsWizardRouterFactory:
             cat = cb.data.split("w:cat:")[1]
             await state.update_data(category=cat)
             await state.set_state(NewEventFSM.title)
-            await cb.message.edit_text(f"Тип: <b>{cat}</b>\nВведи короткое название события:", parse_mode="HTML")
+            await cb.message.edit_text(
+                f"Тип: <b>{cat}</b>\nВведи короткое название события:", parse_mode="HTML"
+            )
             await cb.answer()
 
         @r.message(NewEventFSM.title)
@@ -77,7 +98,9 @@ class EventsWizardRouterFactory:
             await state.set_state(NewEventFSM.starts_date)
             await m.answer("Выбери дату:", reply_markup=cal.markup())
 
-        @r.callback_query(F.data.regexp(r"^cal:\d{4}-\d{2}:nav:(prev|next)$"), NewEventFSM.starts_date)
+        @r.callback_query(
+            F.data.regexp(r"^cal:\d{4}-\d{2}:nav:(prev|next)$"), NewEventFSM.starts_date
+        )
         async def cal_nav(cb: types.CallbackQuery, state: FSMContext):
             parts = cb.data.split(":")  # ['cal', 'YYYY-MM', 'nav', 'prev|next']
             ym = parts[1]
